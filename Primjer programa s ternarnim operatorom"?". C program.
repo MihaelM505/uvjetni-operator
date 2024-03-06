@@ -1,0 +1,49 @@
+#include <stdio.h>
+
+int main() {
+    double broj;
+
+    // Unos realnog broja
+    do {
+        printf("Unesite realan broj veci ili jednak 1 i manji od 2 s barem tri decimalna mjesta: ");
+        scanf("%lf", &broj);
+    } while (broj < 1 || broj >= 2 || (int)(broj * 1000) % 1000 == 0); // Provjera da li je broj u ispravnom opsegu i ima barem tri decimalna mjesta
+
+    // Pretvorba u binarni ekvivalent
+    unsigned long long int binarni[64] = {0};
+
+    // Pretvorba znaka
+    binarni[0] = broj < 0 ? 1 : 0; // Postavljamo prvi bit na 1 za negativan broj
+
+    if (broj < 0)
+        broj = -broj; // Pretvaramo broj u pozitivan za daljnju obradu
+
+    // Pretvorba cijelog dijela
+    int index = 11; // Počinjemo od 12. bita (indeks 11) jer prvih 11 bitova je rezervirano za eksponent
+    int cijeli_dio = (int)broj;
+    while (cijeli_dio > 0) {
+        binarni[index] = cijeli_dio % 2;
+        cijeli_dio /= 2;
+        index--;
+    }
+
+    // Pretvorba decimalnog dijela
+    index = 12; // Počinjemo od 12. bita jer smo već popunili 11 bitova za eksponent
+    double decimalni_dio = broj - (int)broj;
+    while (decimalni_dio > 0 && index < 64) {
+        decimalni_dio *= 2;
+        binarni[index] = decimalni_dio >= 1 ? 1 : 0;
+        if (decimalni_dio >= 1)
+            decimalni_dio -= 1;
+        index++;
+    }
+
+    // Ispis binarnog ekvivalenta
+    printf("Binarni ekvivalent: ");
+    for (int i = 0; i < 64; i++) {
+        printf("%llu", binarni[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
